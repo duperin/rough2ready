@@ -188,23 +188,23 @@ Include:
 By default, return:
 
 ```markdown
-## Prompt reescrito
+## Rewritten Prompt
 [rewritten prompt]
 
-## Resposta
+## Answer
 [answer produced by following the rewritten prompt]
 ```
 
 If the user explicitly asks only to rewrite the prompt, return:
 
 ```markdown
-## Prompt reescrito
+## Rewritten Prompt
 [rewritten prompt]
 ```
 
 If clarification is necessary before rewriting, return:
 
 ```markdown
-Antes de reescrever, preciso esclarecer:
+Before rewriting, I need to clarify:
 1. [question]
 ```

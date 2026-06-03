@@ -108,4 +108,4 @@ rm -rf "$target_dir/agents"
 cp -R "$source_dir/agents" "$target_dir/agents"
 
 printf 'Installed %s to %s\n' "$SKILL_NAME" "$target_dir"
-printf 'Try: $%s compare produto A com produto B\n' "$SKILL_NAME"
+printf 'Try: $%s compare product A with product B\n' "$SKILL_NAME"
