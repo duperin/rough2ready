@@ -139,11 +139,39 @@ From a local clone:
 ./install.sh --agent claude-code
 ```
 
+### OpenCode
+
+OpenCode supports custom slash commands as Markdown files. Install Rough2Ready as a global `/rough2ready` command:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh | bash -s -- --agent opencode
+```
+
+Then use it in OpenCode:
+
+```text
+/rough2ready compare product A with product B
+```
+
+From a local clone:
+
+```bash
+./install.sh --agent opencode
+```
+
+For a per-project command instead of a global command, copy the generated command to `.opencode/commands/rough2ready.md`.
+
 ### Other Agents
 
 For agents that support skill-style instruction folders, add this repository as a skill named `rough2ready` and point the agent to `SKILL.md`.
 
 For agents without native skill support, copy the contents of `SKILL.md` into a reusable instruction, custom command, project rule, or system prompt snippet.
+
+For AGENTS.md-style tools, add a short project or global instruction that says:
+
+```markdown
+When the user invokes Rough2Ready, follow the instructions in `rough2ready/SKILL.md`: improve the rough request, make only useful assumptions, research current facts when needed, then answer the improved request.
+```
 
 You can also install to a custom skills directory:
 
