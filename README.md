@@ -2,7 +2,7 @@
 
 Rough2Ready turns messy intent into a finished answer, without making the user manage the prompt.
 
-It is a lightweight Codex-compatible skill for people who write prompts quickly, informally, or incompletely and still want the agent to produce a useful final answer. Rough2Ready rewrites the request internally, adds only the structure that matters, researches when current facts are needed, and then executes the improved request in the same turn.
+It is a lightweight agent skill for people who write prompts quickly, informally, or incompletely and still want the agent to produce a useful final answer. Rough2Ready rewrites the request internally, adds only the structure that matters, researches when current facts are needed, and then executes the improved request in the same turn.
 
 ## What It Does
 
