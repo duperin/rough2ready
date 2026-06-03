@@ -174,7 +174,7 @@ Include:
 
 ## Style Rules
 
-- Match the user's language. If the user writes in Portuguese, rewrite the prompt in Portuguese.
+- Match the user's language. If the user writes in a non-English language, rewrite the prompt in that language.
 - Keep the rewritten prompt self-contained.
 - Make the prompt detailed, but not bloated.
 - Prefer headings and numbered sections over long paragraphs.

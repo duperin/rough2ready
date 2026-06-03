@@ -27,7 +27,7 @@ The goal is simple:
 ### Compare Products
 
 ```text
-$rough2ready compare BYD Dolphin SE with GAC Aion UT Elite
+$rough2ready compare Framework Laptop 13 with MacBook Air, focus on travel use, repairability, battery life, and long-term value
 ```
 
 Expected behavior:
@@ -41,12 +41,12 @@ Expected behavior:
 ### Compare Travel Options
 
 ```text
-$rough2ready compare Club Med Trancoso with NANNAI Muro Alto
+$rough2ready compare Kyoto with Seoul for a first-time family trip
 ```
 
 Expected behavior:
 
-- compare resort style, location, food, logistics, kids, beach, service, and cost predictability
+- compare trip style, logistics, seasonal considerations, cost drivers, family fit, food, transit, and likely tradeoffs
 - research current information
 - cite sources
 - recommend by traveler profile
@@ -54,20 +54,20 @@ Expected behavior:
 ### Improve and Execute a Technical Request
 
 ```text
-$rough2ready compare jundot/omlx with raullenchai/Rapid-MLX, include pros, cons, features, and practical differences
+$rough2ready compare Pinecone with Weaviate for a small RAG app, include pros, cons, features, and practical differences
 ```
 
 Expected behavior:
 
-- identify the domain as local LLM inference on Apple Silicon
+- identify the domain as vector databases for retrieval-augmented generation
 - check current repository information
-- compare APIs, serving model, agent suitability, maturity, and risks
+- compare hosting options, developer experience, scaling model, pricing risks, ecosystem, and operational tradeoffs
 - produce a practical recommendation
 
 ### Prompt-Only Mode
 
 ```text
-$rough2ready only rewrite this prompt: compare these two tools, I want pros and cons
+$rough2ready only rewrite this prompt: help me choose between two project management apps
 ```
 
 If the user explicitly asks only for prompt rewriting, Rough2Ready returns the improved prompt without executing it.
@@ -88,7 +88,7 @@ Add structure, criteria, constraints, or context only when they make the final a
 
 ### Preserve The User
 
-The skill should match the user's language and preserve the original intent. If the user writes in Portuguese, the rewritten prompt and final answer should usually be in Portuguese.
+The skill should match the user's language and preserve the original intent. If the user writes in a non-English language, the rewritten prompt and final answer should usually stay in that language.
 
 ## Installation
 
@@ -152,10 +152,10 @@ You can also install to a custom skills directory:
 After installing, run:
 
 ```text
-$rough2ready compare Club Med Trancoso with NANNAI Muro Alto
+$rough2ready compare Notion with Obsidian for personal knowledge management
 ```
 
-The expected behavior is that the agent improves the request, researches current travel/product facts when needed, cites sources, and gives a practical recommendation without asking a long list of questions.
+The expected behavior is that the agent improves the request, researches current facts when needed, cites sources, and gives a practical recommendation without asking a long list of questions.
 
 ## Repository Contents
 
