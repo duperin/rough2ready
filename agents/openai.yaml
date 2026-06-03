@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rough2Ready"
+  short_description: "Turn messy intent into finished answers"
+  default_prompt: "Use $rough2ready to improve my rough prompt, then answer it."
