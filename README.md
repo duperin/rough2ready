@@ -174,12 +174,6 @@ rough2ready/
 └── .gitignore
 ```
 
-## Security And Privacy
-
-This repository contains only skill instructions and UI metadata. It should not contain API keys, credentials, tokens, connection strings, private URLs, personal files, logs, or generated chat history.
-
-Before publishing changes, scan for secrets and local-only paths.
-
 ## License
 
 MIT
