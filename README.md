@@ -100,6 +100,8 @@ Install with the script:
 curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh | bash -s -- --agent codex
 ```
 
+In the command above, `bash -s --` tells Bash to read the installer from standard input and pass the remaining arguments (`--agent codex`) to the installer script.
+
 Then invoke it in Codex:
 
 ```text
