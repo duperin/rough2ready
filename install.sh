@@ -80,10 +80,14 @@ fi
 
 target_dir="$target_root/$SKILL_NAME"
 tmp_dir=""
+staging_dir=""
 
 cleanup() {
   if [ -n "$tmp_dir" ] && [ -d "$tmp_dir" ]; then
     rm -rf "$tmp_dir"
+  fi
+  if [ -n "$staging_dir" ] && [ -d "$staging_dir" ]; then
+    rm -rf "$staging_dir"
   fi
 }
 trap cleanup EXIT
@@ -102,10 +106,19 @@ fi
 [ -f "$source_dir/SKILL.md" ] || die "SKILL.md not found in source"
 [ -d "$source_dir/agents" ] || die "agents directory not found in source"
 
-mkdir -p "$target_dir"
-cp "$source_dir/SKILL.md" "$target_dir/SKILL.md"
-rm -rf "$target_dir/agents"
-cp -R "$source_dir/agents" "$target_dir/agents"
+mkdir -p "$target_root"
+staging_dir="$(mktemp -d "${target_root%/}/.${SKILL_NAME}.install.XXXXXX")"
+mkdir -p "$staging_dir/$SKILL_NAME"
+cp "$source_dir/SKILL.md" "$staging_dir/$SKILL_NAME/SKILL.md"
+cp -R "$source_dir/agents" "$staging_dir/$SKILL_NAME/agents"
+
+if [ -e "$target_dir" ]; then
+  backup_dir="${target_dir}.bak.$(date +%Y%m%d%H%M%S).$$"
+  mv "$target_dir" "$backup_dir"
+  printf 'Backed up existing install to %s\n' "$backup_dir"
+fi
+
+mv "$staging_dir/$SKILL_NAME" "$target_dir"
 
 printf 'Installed %s to %s\n' "$SKILL_NAME" "$target_dir"
 printf 'Try: $%s compare product A with product B\n' "$SKILL_NAME"

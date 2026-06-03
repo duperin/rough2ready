@@ -114,6 +114,8 @@ If you already cloned the repository:
 ./install.sh --agent codex
 ```
 
+Re-running the installer backs up an existing install before replacing it.
+
 Manual install also works:
 
 ```bash
