@@ -9,12 +9,14 @@ usage() {
 Rough2Ready installer
 
 Usage:
+  ./install.sh
   ./install.sh --agent codex
   ./install.sh --agent claude-code
   ./install.sh --agent opencode
   ./install.sh --target /path/to/skills
 
 Options:
+  no arguments         Install to detected agents only
   --agent codex        Install to ~/.codex/skills/rough2ready
   --agent claude-code  Install to ~/.claude/skills/rough2ready
   --agent opencode     Install as ~/.config/opencode/commands/rough2ready.md
@@ -25,10 +27,11 @@ Options:
 Examples:
   git clone https://github.com/duperin/rough2ready.git
   cd rough2ready
+  ./install.sh
   ./install.sh --agent codex
   ./install.sh --agent opencode
 
-  curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh | bash -s -- --agent codex
+  curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh | bash
 EOF
 }
 
@@ -37,9 +40,8 @@ die() {
   exit 1
 }
 
-agent=""
+agent="auto"
 target_root=""
-install_kind="skill"
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -68,38 +70,11 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-if [ -z "$target_root" ]; then
-  case "$agent" in
-    codex|"")
-      target_root="$HOME/.codex/skills"
-      ;;
-    claude-code|claude)
-      target_root="$HOME/.claude/skills"
-      ;;
-    opencode|open-code)
-      target_root="$HOME/.config/opencode/commands"
-      install_kind="opencode-command"
-      ;;
-    *)
-      die "unsupported agent '$agent'. Use --target for custom agents."
-      ;;
-  esac
-fi
-
-target_dir="$target_root/$SKILL_NAME"
 tmp_dir=""
-staging_dir=""
-staging_file=""
 
 cleanup() {
   if [ -n "$tmp_dir" ] && [ -d "$tmp_dir" ]; then
     rm -rf "$tmp_dir"
-  fi
-  if [ -n "$staging_dir" ] && [ -d "$staging_dir" ]; then
-    rm -rf "$staging_dir"
-  fi
-  if [ -n "$staging_file" ] && [ -f "$staging_file" ]; then
-    rm -f "$staging_file"
   fi
 }
 trap cleanup EXIT
@@ -118,7 +93,8 @@ fi
 [ -f "$source_dir/SKILL.md" ] || die "SKILL.md not found in source"
 [ -d "$source_dir/agents" ] || die "agents directory not found in source"
 
-if [ "$install_kind" = "opencode-command" ]; then
+install_opencode_command() {
+  target_root="$1"
   mkdir -p "$target_root"
   command_file="$target_root/$SKILL_NAME.md"
   staging_file="$(mktemp "${target_root%/}/.${SKILL_NAME}.command.XXXXXX")"
@@ -147,22 +123,83 @@ if [ "$install_kind" = "opencode-command" ]; then
   mv "$staging_file" "$command_file"
   printf 'Installed OpenCode command to %s\n' "$command_file"
   printf 'Try: /%s compare product A with product B\n' "$SKILL_NAME"
+}
+
+install_skill_folder() {
+  target_root="$1"
+  target_dir="$target_root/$SKILL_NAME"
+  mkdir -p "$target_root"
+  staging_dir="$(mktemp -d "${target_root%/}/.${SKILL_NAME}.install.XXXXXX")"
+  mkdir -p "$staging_dir/$SKILL_NAME"
+  cp "$source_dir/SKILL.md" "$staging_dir/$SKILL_NAME/SKILL.md"
+  cp -R "$source_dir/agents" "$staging_dir/$SKILL_NAME/agents"
+
+  if [ -e "$target_dir" ]; then
+    backup_dir="${target_dir}.bak.$(date +%Y%m%d%H%M%S).$$"
+    mv "$target_dir" "$backup_dir"
+    printf 'Backed up existing install to %s\n' "$backup_dir"
+  fi
+
+  mv "$staging_dir/$SKILL_NAME" "$target_dir"
+  rmdir "$staging_dir" 2>/dev/null || true
+
+  printf 'Installed %s to %s\n' "$SKILL_NAME" "$target_dir"
+  printf 'Try: $%s compare product A with product B\n' "$SKILL_NAME"
+}
+
+agent_available() {
+  case "$1" in
+    codex)
+      command -v codex >/dev/null 2>&1 || [ -d "$HOME/.codex" ]
+      ;;
+    claude-code)
+      command -v claude >/dev/null 2>&1 || command -v claude-code >/dev/null 2>&1 || [ -d "$HOME/.claude" ]
+      ;;
+    opencode)
+      command -v opencode >/dev/null 2>&1 || [ -d "$HOME/.config/opencode" ]
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+install_agent() {
+  case "$1" in
+    codex)
+      install_skill_folder "$HOME/.codex/skills"
+      ;;
+    claude-code|claude)
+      install_skill_folder "$HOME/.claude/skills"
+      ;;
+    opencode|open-code)
+      install_opencode_command "$HOME/.config/opencode/commands"
+      ;;
+    *)
+      die "unsupported agent '$1'. Use --target for custom agents."
+      ;;
+  esac
+}
+
+if [ -n "$target_root" ]; then
+  install_skill_folder "$target_root"
   exit 0
 fi
 
-mkdir -p "$target_root"
-staging_dir="$(mktemp -d "${target_root%/}/.${SKILL_NAME}.install.XXXXXX")"
-mkdir -p "$staging_dir/$SKILL_NAME"
-cp "$source_dir/SKILL.md" "$staging_dir/$SKILL_NAME/SKILL.md"
-cp -R "$source_dir/agents" "$staging_dir/$SKILL_NAME/agents"
-
-if [ -e "$target_dir" ]; then
-  backup_dir="${target_dir}.bak.$(date +%Y%m%d%H%M%S).$$"
-  mv "$target_dir" "$backup_dir"
-  printf 'Backed up existing install to %s\n' "$backup_dir"
+if [ "$agent" != "auto" ]; then
+  install_agent "$agent"
+  exit 0
 fi
 
-mv "$staging_dir/$SKILL_NAME" "$target_dir"
+installed_any=0
+for detected_agent in codex claude-code opencode; do
+  if agent_available "$detected_agent"; then
+    install_agent "$detected_agent"
+    installed_any=1
+  fi
+done
 
-printf 'Installed %s to %s\n' "$SKILL_NAME" "$target_dir"
-printf 'Try: $%s compare product A with product B\n' "$SKILL_NAME"
+if [ "$installed_any" -eq 0 ]; then
+  printf 'No supported agent install was detected. Nothing was installed.\n'
+  printf 'Use --agent codex, --agent claude-code, --agent opencode, or --target PATH to install explicitly.\n'
+fi

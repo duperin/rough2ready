@@ -1,6 +1,6 @@
 param(
-  [ValidateSet("codex", "claude-code", "claude", "opencode", "open-code")]
-  [string]$Agent = "codex",
+  [ValidateSet("auto", "codex", "claude-code", "claude", "opencode", "open-code")]
+  [string]$Agent = "auto",
   [string]$Target,
   [string]$Repo = "https://github.com/duperin/rough2ready",
   [switch]$Help
@@ -16,10 +16,12 @@ Rough2Ready installer for Windows PowerShell
 Usage:
   irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1 | iex
   iex "& { `$(irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1) } -Agent opencode"
+  .\install.ps1
   .\install.ps1 -Agent codex
   .\install.ps1 -Target C:\path\to\skills
 
 Options:
+  no arguments         Install to detected agents only
   -Agent codex        Install to %USERPROFILE%\.codex\skills\rough2ready
   -Agent claude-code  Install to %USERPROFILE%\.claude\skills\rough2ready
   -Agent opencode     Install as %USERPROFILE%\.config\opencode\commands\rough2ready.md
@@ -144,6 +146,52 @@ $skillContent
   Write-Host "Try: /$SkillName compare product A with product B"
 }
 
+function Test-AgentAvailable {
+  param([string]$AgentName)
+
+  switch ($AgentName) {
+    "codex" {
+      return [bool]((Get-Command codex -ErrorAction SilentlyContinue) -or
+        (Test-Path -LiteralPath (Join-Path (Get-HomePath) ".codex")))
+    }
+    "claude-code" {
+      return [bool]((Get-Command claude -ErrorAction SilentlyContinue) -or
+        (Get-Command claude-code -ErrorAction SilentlyContinue) -or
+        (Test-Path -LiteralPath (Join-Path (Get-HomePath) ".claude")))
+    }
+    "opencode" {
+      return [bool]((Get-Command opencode -ErrorAction SilentlyContinue) -or
+        (Test-Path -LiteralPath (Join-Path (Get-HomePath) ".config\opencode")))
+    }
+    default {
+      return $false
+    }
+  }
+}
+
+function Install-Agent {
+  param(
+    [string]$AgentName,
+    [string]$SourceDir,
+    [string]$HomePath
+  )
+
+  switch ($AgentName) {
+    "codex" {
+      Install-SkillFolder -SourceDir $SourceDir -TargetRoot (Join-Path $HomePath ".codex\skills")
+    }
+    { $_ -in @("claude-code", "claude") } {
+      Install-SkillFolder -SourceDir $SourceDir -TargetRoot (Join-Path $HomePath ".claude\skills")
+    }
+    { $_ -in @("opencode", "open-code") } {
+      Install-OpenCodeCommand -SourceDir $SourceDir -CommandRoot (Join-Path $HomePath ".config\opencode\commands")
+    }
+    default {
+      throw "Unsupported agent '$AgentName'. Use -Target for custom agents."
+    }
+  }
+}
+
 if ($Help) {
   Show-Usage
   exit 0
@@ -153,23 +201,6 @@ $script:Rough2ReadyCleanupPaths = @()
 
 try {
   $homePath = Get-HomePath
-  $installKind = "skill"
-
-  if (-not $Target) {
-    switch ($Agent) {
-      "codex" {
-        $Target = Join-Path $homePath ".codex\skills"
-      }
-      { $_ -in @("claude-code", "claude") } {
-        $Target = Join-Path $homePath ".claude\skills"
-      }
-      { $_ -in @("opencode", "open-code") } {
-        $Target = Join-Path $homePath ".config\opencode\commands"
-        $installKind = "opencode-command"
-      }
-    }
-  }
-
   $sourceDir = Get-SourceDir -RepoUrl $Repo
 
   if (-not (Test-Path -LiteralPath (Join-Path $sourceDir "SKILL.md"))) {
@@ -179,12 +210,28 @@ try {
     throw "agents directory not found in source."
   }
 
-  if ($installKind -eq "opencode-command") {
-    Install-OpenCodeCommand -SourceDir $sourceDir -CommandRoot $Target
-  }
-  else {
+  if ($Target) {
     New-Item -ItemType Directory -Path $Target -Force | Out-Null
     Install-SkillFolder -SourceDir $sourceDir -TargetRoot $Target
+    return
+  }
+
+  if ($Agent -ne "auto") {
+    Install-Agent -AgentName $Agent -SourceDir $sourceDir -HomePath $homePath
+    return
+  }
+
+  $installedAny = $false
+  foreach ($detectedAgent in @("codex", "claude-code", "opencode")) {
+    if (Test-AgentAvailable -AgentName $detectedAgent) {
+      Install-Agent -AgentName $detectedAgent -SourceDir $sourceDir -HomePath $homePath
+      $installedAny = $true
+    }
+  }
+
+  if (-not $installedAny) {
+    Write-Host "No supported agent install was detected. Nothing was installed."
+    Write-Host "Use -Agent codex, -Agent claude-code, -Agent opencode, or -Target PATH to install explicitly."
   }
 }
 finally {

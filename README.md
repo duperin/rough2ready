@@ -132,12 +132,14 @@ curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh
 irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1 | iex
 ```
 
-Both commands install Rough2Ready for Codex by default.
+Both commands install Rough2Ready for every supported agent detected on the machine: Codex, Claude Code, and OpenCode.
+
+If none of those agents are detected, nothing is installed. Use the advanced options below to force a specific target.
 
 <details>
 <summary>Install for Claude Code, OpenCode, or a custom path</summary>
 
-Use the same installer with an agent option.
+Use the same installer with an agent option to force a specific target.
 
 | Agent | macOS/Linux | Windows PowerShell |
 | --- | --- | --- |
