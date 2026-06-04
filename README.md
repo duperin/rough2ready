@@ -114,6 +114,68 @@ The skill should match the user's language and preserve the original intent. If 
 
 ## Installation
 
+### Requirements
+
+- An agent that supports local skills or reusable command instructions, such as Codex, Claude Code, or OpenCode.
+- macOS/Linux: Bash, Git, and `curl`.
+- Windows: Windows 10 or later, PowerShell 5.1 or later, and internet access. Git is not required for the one-line Windows installer.
+
+### Windows PowerShell
+
+Install for Codex with:
+
+```powershell
+irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1 | iex
+```
+
+This defaults to:
+
+```text
+%USERPROFILE%\.codex\skills\rough2ready
+```
+
+To install on Windows for Claude Code instead:
+
+```powershell
+iex "& { $(irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1) } -Agent claude-code"
+```
+
+This installs to:
+
+```text
+%USERPROFILE%\.claude\skills\rough2ready
+```
+
+For OpenCode:
+
+```powershell
+iex "& { $(irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1) } -Agent opencode"
+```
+
+The OpenCode installer creates:
+
+```text
+%USERPROFILE%\.config\opencode\commands\rough2ready.md
+```
+
+From a local clone:
+
+```powershell
+.\install.ps1 -Agent codex
+```
+
+If your PowerShell execution policy blocks local scripts, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Agent codex
+```
+
+You can also install to a custom skills directory:
+
+```powershell
+iex "& { $(irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1) } -Target C:\path\to\skills"
+```
+
 ### Codex
 
 Install with the script:
@@ -219,6 +281,7 @@ rough2ready/
 ├── agents/
 │   └── openai.yaml
 ├── install.sh
+├── install.ps1
 ├── README.md
 ├── LICENSE
 └── .gitignore
