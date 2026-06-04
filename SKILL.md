@@ -130,9 +130,14 @@ Include:
 - comparison table with domain-specific criteria
 - explicit pros and cons for each option, unless doing so would be redundant with a shorter recommendation
 - strengths and weaknesses for each option
+- feature or capability coverage when the user asks for features, specs, pros/cons, "etc.", or a broad comparison
 - crucial differences in philosophy, architecture, experience, cost, or fit
 - scenario-based recommendation
 - when the non-recommended option would be better
+
+For comparisons, preserve breadth. Include a feature/capability table, explicit pros and cons for each option, and scenario-based recommendations. Do not over-compress technical, product, purchase, or travel comparisons when the user asks for "pros", "cons", "features", "specs", "differences", "etc.", or similar broad evaluation language.
+
+When comparing products or components that exist inside real-world systems, compare both the core item and the surrounding product context. Examples: compare a chip plus the Mac it ships in, a camera sensor plus the phone body/software, a hotel plus its location/logistics, or a software library plus its ecosystem and deployment model.
 
 ### Recommendation or Purchase
 
