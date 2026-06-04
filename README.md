@@ -22,6 +22,28 @@ The goal is simple:
 
 > Write messy. Get ready.
 
+## How It Thinks
+
+Rough2Ready does not show the rewritten prompt by default. It uses the improved request internally, then returns the final answer.
+
+Input:
+
+```text
+compare two project management apps, pros cons features etc
+```
+
+Internally, Rough2Ready treats that as something closer to:
+
+```text
+Compare the two project management apps as a practical usage decision. Include a feature table, pricing and current availability if relevant, pros and cons for each option, key workflow differences, ideal user profiles, risks, and a final recommendation by scenario. Research current facts and cite sources before the verdict.
+```
+
+Normal output:
+
+```text
+[final comparison answer]
+```
+
 ## Example Uses
 
 ### Compare Products
