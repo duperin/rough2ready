@@ -53,7 +53,7 @@ Transform the user's rough prompt into a stronger prompt, then answer the improv
    - If the original prompt is dangerously ambiguous, follow the Clarification Policy before proceeding.
    - If reasonable assumptions are enough, include them inside the rewritten prompt under "Assumptions to use if not specified".
    - Unless the user explicitly asks only for the rewritten prompt, answer the task using the improved prompt in the same response.
-   - Keep the rewritten prompt visible but compact when the final answer is the main value.
+   - Use the rewritten prompt internally by default. Do not show it unless the user explicitly asks to see it, asks for prompt-only mode, or the rewritten prompt is useful for debugging or review.
 
 ## Clarification Policy
 
@@ -75,6 +75,17 @@ Every word in the rewritten prompt should be load-bearing.
 When rewriting, add structure, criteria, constraints, or context only when they make the final answer clearer, more accurate, more useful, or safer. Remove generic padding, motivational language, duplicated instructions, and ornamental phrasing.
 
 Prefer a compact prompt that reliably produces the right answer over a long prompt that sounds impressive.
+
+## Rewritten Prompt Visibility
+
+Do not show the rewritten prompt by default.
+
+Use the improved prompt as the operative instruction, then return the final answer. Show the rewritten prompt only when:
+- the user explicitly asks for it
+- the user asks for prompt-only mode
+- the user is testing, debugging, reviewing, or iterating on Rough2Ready itself
+
+When showing the rewritten prompt, keep it compact.
 
 ## Prompt Template Pattern
 
@@ -117,6 +128,7 @@ Include:
 - objective and decision context
 - brief overview of each option
 - comparison table with domain-specific criteria
+- explicit pros and cons for each option, unless doing so would be redundant with a shorter recommendation
 - strengths and weaknesses for each option
 - crucial differences in philosophy, architecture, experience, cost, or fit
 - scenario-based recommendation
@@ -188,10 +200,6 @@ Include:
 By default, return:
 
 ```markdown
-## Rewritten Prompt
-[rewritten prompt]
-
-## Answer
 [answer produced by following the rewritten prompt]
 ```
 
