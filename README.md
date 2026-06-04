@@ -112,7 +112,7 @@ Add structure, criteria, constraints, or context only when they make the final a
 
 The skill should match the user's language and preserve the original intent. If the user writes in a non-English language, the rewritten prompt and final answer should usually stay in that language.
 
-## Installation
+## Quick Install
 
 ### Requirements
 
@@ -120,148 +120,52 @@ The skill should match the user's language and preserve the original intent. If 
 - macOS/Linux: Bash, Git, and `curl`.
 - Windows: Windows 10 or later, PowerShell 5.1 or later, and internet access. Git is not required for the one-line Windows installer.
 
-### Windows PowerShell
+### Linux, macOS, WSL2, Termux
 
-Install for Codex with:
+```bash
+curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh | bash
+```
+
+### Windows PowerShell
 
 ```powershell
 irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1 | iex
 ```
 
-This defaults to:
+Both commands install Rough2Ready for Codex by default.
 
-```text
-%USERPROFILE%\.codex\skills\rough2ready
-```
+<details>
+<summary>Install for Claude Code, OpenCode, or a custom path</summary>
 
-To install on Windows for Claude Code instead:
+Use the same installer with an agent option.
 
-```powershell
-iex "& { $(irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1) } -Agent claude-code"
-```
+| Agent | macOS/Linux | Windows PowerShell |
+| --- | --- | --- |
+| Codex | `curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh \| bash` | `irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1 \| iex` |
+| Claude Code | `curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh \| bash -s -- --agent claude-code` | `iex "& { $(irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1) } -Agent claude-code"` |
+| OpenCode | `curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh \| bash -s -- --agent opencode` | `iex "& { $(irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1) } -Agent opencode"` |
 
-This installs to:
+Default install locations:
 
-```text
-%USERPROFILE%\.claude\skills\rough2ready
-```
-
-For OpenCode:
-
-```powershell
-iex "& { $(irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1) } -Agent opencode"
-```
-
-The OpenCode installer creates:
-
-```text
-%USERPROFILE%\.config\opencode\commands\rough2ready.md
-```
+| Agent | Location |
+| --- | --- |
+| Codex | `~/.codex/skills/rough2ready` |
+| Claude Code | `~/.claude/skills/rough2ready` |
+| OpenCode | `~/.config/opencode/commands/rough2ready.md` |
 
 From a local clone:
-
-```powershell
-.\install.ps1 -Agent codex
-```
-
-If your PowerShell execution policy blocks local scripts, run:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1 -Agent codex
-```
-
-You can also install to a custom skills directory:
-
-```powershell
-iex "& { $(irm https://raw.githubusercontent.com/duperin/rough2ready/main/install.ps1) } -Target C:\path\to\skills"
-```
-
-### Codex
-
-Install with the script:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh | bash -s -- --agent codex
-```
-
-In the command above, `bash -s --` tells Bash to read the installer from standard input and pass the remaining arguments (`--agent codex`) to the installer script.
-
-Then invoke it in Codex:
-
-```text
-$rough2ready compare product A with product B
-```
-
-If you already cloned the repository:
 
 ```bash
 ./install.sh --agent codex
 ```
 
+```powershell
+.\install.ps1 -Agent codex
+```
+
 Re-running the installer backs up an existing install before replacing it.
 
-Manual install also works:
-
-```bash
-mkdir -p ~/.codex/skills
-git clone https://github.com/duperin/rough2ready.git ~/.codex/skills/rough2ready
-```
-
-Restart Codex or start a new chat if the skill does not appear immediately.
-
-### Claude Code
-
-If your Claude Code setup supports local skills under `~/.claude/skills`, install with:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh | bash -s -- --agent claude-code
-```
-
-From a local clone:
-
-```bash
-./install.sh --agent claude-code
-```
-
-### OpenCode
-
-OpenCode supports custom slash commands as Markdown files. Install Rough2Ready as a global `/rough2ready` command:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/duperin/rough2ready/main/install.sh | bash -s -- --agent opencode
-```
-
-Then use it in OpenCode:
-
-```text
-/rough2ready compare product A with product B
-```
-
-From a local clone:
-
-```bash
-./install.sh --agent opencode
-```
-
-For a per-project command instead of a global command, copy the generated command to `.opencode/commands/rough2ready.md`.
-
-### Other Agents
-
-For agents that support skill-style instruction folders, add this repository as a skill named `rough2ready` and point the agent to `SKILL.md`.
-
-For agents without native skill support, copy the contents of `SKILL.md` into a reusable instruction, custom command, project rule, or system prompt snippet.
-
-For AGENTS.md-style tools, add a short project or global instruction that says:
-
-```markdown
-When the user invokes Rough2Ready, follow the instructions in `rough2ready/SKILL.md`: improve the rough request, make only useful assumptions, research current facts when needed, then answer the improved request.
-```
-
-You can also install to a custom skills directory:
-
-```bash
-./install.sh --target /path/to/skills
-```
+</details>
 
 ### Quick Test
 
